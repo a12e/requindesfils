@@ -5,8 +5,8 @@
 #include "../4_transport/udp.h"
 #include "../4_transport/tcp.h"
 
-void print_ip_addr(int ip) {
-    int bytes[4];
+void print_ip_addr(int32_t ip) {
+    int32_t bytes[4];
     bytes[0] = ip & 0xFF;
     bytes[1] = (ip >> 8) & 0xFF;
     bytes[2] = (ip >> 16) & 0xFF;
