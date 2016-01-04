@@ -42,4 +42,8 @@ struct dnshdr {
 };
 
 
+
+void handle_dns(const unsigned char *bytes);
+
+
 #endif //REQUINDESFILS_DNS_H

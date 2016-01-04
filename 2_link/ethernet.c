@@ -1,9 +1,7 @@
-//
-// Created by abrooke on 17/12/15.
-//
-
 #include <stdio.h>
-#include "ether.h"
+#include <netinet/in.h>
+#include "ethernet.h"
+#include "../3_network/ip.h"
 
 void print_ether_address(u_int8_t ether_addr[ETH_ALEN]) {
     printf("%02x:%02x:%02x:%02x:%02x:%02x",
@@ -49,5 +47,21 @@ void print_ether_type(u_int16_t type) {
         default:
             printf("UNKNOWN (0x%x)", type);
             break;
+    }
+}
+
+void handle_ethernet(const unsigned char *bytes) {
+    struct ether_header *eth_hdr = (struct ether_header *)bytes;
+    eth_hdr->ether_type = ntohs(eth_hdr->ether_type);
+    printf("ETHER   src="); print_ether_address(eth_hdr->ether_shost);
+    printf(" dest="); print_ether_address(eth_hdr->ether_dhost);
+    printf(" type="); print_ether_type(eth_hdr->ether_type);
+    printf("\n");
+
+    bytes += sizeof(struct ether_header);
+
+    switch(eth_hdr->ether_type) {
+        case ETHERTYPE_IP: return handle_ip(bytes);
+        default: return;
     }
 }
