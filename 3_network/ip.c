@@ -4,6 +4,7 @@
 #include "ip.h"
 #include "../4_transport/udp.h"
 #include "../4_transport/tcp.h"
+#include "../print.h"
 
 void print_ip_addr(int32_t ip) {
     int32_t bytes[4];
@@ -16,15 +17,18 @@ void print_ip_addr(int32_t ip) {
 
 void handle_ip(const unsigned char *bytes) {
     struct iphdr *ip_hdr = (struct iphdr *)bytes;
-    printf("IP      source="); print_ip_addr(ip_hdr->saddr);
-    printf(" dest="); print_ip_addr(ip_hdr->daddr);
-    printf(" version=%u ihl=%u tos=%u len=%u ", ip_hdr->version, ip_hdr->ihl, ip_hdr->tos, ntohs(ip_hdr->tot_len));
-    printf("id=%u frag_off=%u ttl=%u ", ip_hdr->id, ip_hdr->frag_off, ip_hdr->ttl);
-    printf("protocol=Ox%x checksum=%u ", ip_hdr->protocol, ip_hdr->check);
+    print2("IP      "); print_ip_addr(ip_hdr->saddr);
+    print2(" -> "); print_ip_addr(ip_hdr->daddr);
+    printf2(", v%u, ", ip_hdr->version);
+    printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
+    printf2("len %u, ", ntohs(ip_hdr->tot_len));
+    printf2("id %u, ", ip_hdr->id);
+    printf3("frag_off %u, ttl %u, ", ip_hdr->frag_off, ip_hdr->ttl);
+    printf2("protocol Ox%x, ", ip_hdr->protocol);
+    printf3("checksum %u ", ip_hdr->check);
 
     const u_char *ip_hdr_end = bytes + 4 * ip_hdr->ihl;
 
-    printf(" options=");
     while(bytes < ip_hdr_end) {
         bytes++;
     }

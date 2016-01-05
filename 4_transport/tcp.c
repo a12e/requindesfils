@@ -1,10 +1,60 @@
-#include <stdio.h>
 #include <netinet/tcp.h>
+#include <netinet/in.h>
 #include "tcp.h"
+#include "../print.h"
+
+static int flag_count;
+
+void print_flag(const char *name) {
+    if(flag_count > 0) {
+        printf2(", %s", name);
+    }
+    else {
+        print2(name);
+    }
+    flag_count++;
+}
+
+void print_flags(u_int8_t flags) {
+    flag_count = 0;
+    if(flags & TH_FIN) print_flag("FIN");
+    if(flags & TH_SYN) print_flag("SYN");
+    if(flags & TH_RST) print_flag("RST");
+    if(flags & TH_PUSH) print_flag("PUSH");
+    if(flags & TH_ACK) print_flag("ACK");
+    if(flags & TH_URG) print_flag("URG");
+}
 
 void handle_tcp(const unsigned char *bytes) {
     struct tcphdr *tcp_hdr = (struct tcphdr *) bytes;
-    printf("TCP  srcport=%u destport=%u seq=%u ack=%u offset=%u \n",
-           tcp_hdr->th_sport, tcp_hdr->th_dport, tcp_hdr->seq, tcp_hdr->seq, tcp_hdr->th_off);
+    printf2("TCP     %u -> %u, [", ntohs(tcp_hdr->th_sport), ntohs(tcp_hdr->th_dport));
+    print_flags(tcp_hdr->th_flags);
+    print2("], ");
+    printf2("seq %u, ack %u, off %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq), tcp_hdr->th_off);
 
+    const unsigned char *end = bytes + 4 * tcp_hdr->th_off;
+    bytes += sizeof(struct tcphdr);
+
+    while(bytes < end) {
+        uint8_t kind = *bytes++;
+
+        uint8_t len = 0;
+        if(kind != 0 && kind != 1)
+            len = *bytes++;
+
+        printf3("-OPTION  %u ", kind);
+        switch(kind) {
+            case 0: print3("end of options"); break;
+            case 1: print3("no operation (NOP)"); break;
+            case 2: printf3("MSS %u", ntohl(*(uint32_t*) bytes)); break;
+            case 3: print3("window scale"); break;
+            case 4: print3("SACK permited"); break;
+            case 5: print3("SACK"); break;
+            case 8: print3("timestamps"); break;
+            default: break;
+        }
+        print3("\n");
+
+        bytes += len;
+    }
 }

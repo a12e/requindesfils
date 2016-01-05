@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     pcap_t *capture;
     bpf_u_int32 ip;
     bpf_u_int32 mask;
-    const char *filter = "udp";
+    const char *filter = "";
     struct bpf_program bpf_program;
 
     int option;

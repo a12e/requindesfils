@@ -57,7 +57,7 @@ void handle_dns(const unsigned char *bytes) {
     bytes += sizeof(struct dnshdr);
 
     for(int i = 0; i < ntohs(dns_hdr->qdcount); i++) {
-        print1("QUESTN  ");
+        print1("-QUESTN ");
         bytes += print_label((const unsigned char *)dns_hdr, bytes);
         putchar1(' ');
         print_type(ntohs(*(uint16_t *) bytes));
@@ -69,7 +69,7 @@ void handle_dns(const unsigned char *bytes) {
     }
 
     for(int i = 0; i < ntohs(dns_hdr->ancount); i++) {
-        print1("ANSWER  ");
+        print1("-ANSWER ");
         bytes += print_label((const unsigned char *)dns_hdr, bytes);
         putchar1(' ');
 
