@@ -30,7 +30,7 @@ void handle_tcp(const unsigned char *bytes) {
     printf2("TCP     %u -> %u, [", ntohs(tcp_hdr->th_sport), ntohs(tcp_hdr->th_dport));
     print_flags(tcp_hdr->th_flags);
     print2("], ");
-    printf2("seq %u, ack %u, off %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq), tcp_hdr->th_off);
+    printf2("seq %u, ack %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq));
 
     const unsigned char *end = bytes + 4 * tcp_hdr->th_off;
     bytes += sizeof(struct tcphdr);

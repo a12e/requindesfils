@@ -14,7 +14,7 @@ void abort_pcap(const char *error) {
 }
 
 void packet_handler(u_char *user, const struct pcap_pkthdr *h, const u_char *bytes) {
-    printf("-\n");
+    printf("--------------------------------------------------------------------------------\n");
     handle_ethernet(bytes);
 }
 

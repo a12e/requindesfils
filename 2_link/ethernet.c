@@ -3,6 +3,7 @@
 #include "ethernet.h"
 #include "../3_network/ip.h"
 #include "../print.h"
+#include "../5_application/arp.h"
 
 void print_ether_address(u_int8_t ether_addr[ETH_ALEN]) {
     printf2("%02x:%02x:%02x:%02x:%02x:%02x",
@@ -63,6 +64,8 @@ void handle_ethernet(const unsigned char *bytes) {
 
     switch(eth_hdr->ether_type) {
         case ETHERTYPE_IP: return handle_ip(bytes);
+        case ETHERTYPE_ARP: return handle_arp(bytes);
+        case ETHERTYPE_REVARP: return handle_arp(bytes);
         default: return;
     }
 }
