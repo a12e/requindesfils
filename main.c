@@ -2,7 +2,6 @@
 #include <pcap/pcap.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <string.h>
 #include "2_link/ethernet.h"
 #include "3_network/ip.h"
 

@@ -20,10 +20,10 @@ void handle_ip(const unsigned char *bytes) {
     print2("IP      "); print_ip_addr(ip_hdr->saddr);
     print2(" -> "); print_ip_addr(ip_hdr->daddr);
     printf2(", v%u, ", ip_hdr->version);
-    printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
+    //printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
     printf2("len %u, ", ntohs(ip_hdr->tot_len));
     printf2("id %u, ", ip_hdr->id);
-    printf3("frag_off %u, ttl %u, ", ip_hdr->frag_off, ip_hdr->ttl);
+    //printf3("frag_off %u, ttl %u, ", ip_hdr->frag_off, ip_hdr->ttl);
     printf2("protocol Ox%x, ", ip_hdr->protocol);
     printf3("checksum %u ", ip_hdr->check);
 
