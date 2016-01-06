@@ -2,6 +2,7 @@
 #include <netinet/in.h>
 #include "tcp.h"
 #include "../print.h"
+#include "../5_application/http.h"
 
 static int flag_count;
 
@@ -27,7 +28,9 @@ void print_flags(u_int8_t flags) {
 
 void handle_tcp(const unsigned char *bytes) {
     struct tcphdr *tcp_hdr = (struct tcphdr *) bytes;
-    printf2("TCP     %u -> %u, [", ntohs(tcp_hdr->th_sport), ntohs(tcp_hdr->th_dport));
+    tcp_hdr->th_sport = ntohs(tcp_hdr->th_sport);
+    tcp_hdr->th_dport = ntohs(tcp_hdr->th_dport);
+    printf2("TCP     %u -> %u, [", tcp_hdr->th_sport, tcp_hdr->th_dport);
     print_flags(tcp_hdr->th_flags);
     print2("], ");
     printf2("seq %u, ack %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq));
@@ -42,11 +45,11 @@ void handle_tcp(const unsigned char *bytes) {
         if(kind != 0 && kind != 1)
             len = *bytes++;
 
-        printf3("-OPTION  %u ", kind);
+        printf3("        option %u ", kind);
         switch(kind) {
             case 0: print3("end of options"); break;
             case 1: print3("no operation (NOP)"); break;
-            case 2: printf3("MSS %u", ntohl(*(uint32_t*) bytes)); break;
+            case 2: printf3("MSS %u", (*(uint32_t*) bytes)); break;
             case 3: print3("window scale"); break;
             case 4: print3("SACK permited"); break;
             case 5: print3("SACK"); break;
@@ -56,5 +59,12 @@ void handle_tcp(const unsigned char *bytes) {
         print3("\n");
 
         bytes += len;
+    }
+
+    if(tcp_hdr->th_sport == 80 || tcp_hdr->th_dport == 80) {
+        handle_http((const char *)bytes);
+    }
+    else {
+        print2("???\n");
     }
 }

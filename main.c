@@ -2,6 +2,7 @@
 #include <pcap/pcap.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 #include "2_link/ethernet.h"
 #include "3_network/ip.h"
 
@@ -42,6 +43,7 @@ int main(int argc, char **argv) {
                 break;
             case 'f':
                 filter = optarg;
+                printf("using \"%s\" as BPF filter\n", filter);
                 break;
             case 'v':
                 verbosity = atoi(optarg);
@@ -88,6 +90,8 @@ int main(int argc, char **argv) {
     if(pcap_setfilter(capture, &bpf_program) != 0) {
         abort_pcap("pcap_setfilter");
     }
+
+    pcap_freecode(&bpf_program);
 
     pcap_loop(capture, -1, &packet_handler, NULL);
 
