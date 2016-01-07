@@ -38,7 +38,7 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
     print2("], ");
     printf2("seq %u, ack %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq));
 
-    print_hex(bytes, segment_len);
+    //print_hex(bytes, segment_len);
 
     int data_offset = 4 * tcp_hdr->th_off;
     const unsigned char *end = bytes + data_offset;

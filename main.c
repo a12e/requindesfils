@@ -15,7 +15,13 @@ void abort_pcap(const char *error) {
 }
 
 void packet_handler(u_char *user, const struct pcap_pkthdr *h, const u_char *bytes) {
-    printf("--------------------------------------------------------------------------------\n");
+    static int packet_count = 0;
+
+    printf("--(");
+    int number_len = printf("%d)", packet_count++);
+    for(int i = 3 + number_len; i <= 80; i++) putchar('-');
+    putchar('\n');
+
     handle_ethernet(bytes);
 }
 

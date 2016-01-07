@@ -11,7 +11,7 @@ void handle_bootp(const unsigned char *bytes) {
     printf1("tid 0x%x", ntohl(bootp_hdr->bp_xid));
     if(bootp_hdr->bp_ciaddr.s_addr != 0) printf1(", client %s", inet_ntoa(bootp_hdr->bp_ciaddr));
     if(bootp_hdr->bp_htype == 1 && bootp_hdr->bp_hlen == 6 && bootp_hdr->bp_chaddr[0] != 0 && bootp_hdr->bp_chaddr[1] != 0) {
-        print1(" ("); print_ether_address(bootp_hdr->bp_chaddr); print1(")");
+        print1(" ("); print_ether_address1(bootp_hdr->bp_chaddr); print1(")");
     }
     if(bootp_hdr->bp_yiaddr.s_addr != 0) printf1(", your %s", inet_ntoa(bootp_hdr->bp_yiaddr));
     if(bootp_hdr->bp_siaddr.s_addr != 0) printf1(", server %s", inet_ntoa(bootp_hdr->bp_siaddr));
@@ -23,7 +23,7 @@ void handle_bootp(const unsigned char *bytes) {
 
     if(memcmp(pvendor, magic_cookie, 4) == 0) {
         pvendor += 4;
-        // Seen the magic cookie
+        printf3("        magic cookie 0x%02x%02x%02x%02x\n", magic_cookie[0], magic_cookie[1], magic_cookie[2], magic_cookie[3]);
 
         while(1) {
             u_int8_t option = *pvendor++;
@@ -35,12 +35,12 @@ void handle_bootp(const unsigned char *bytes) {
                 case TAG_PAD:
                     break;
                 case TAG_SUBNET_MASK:
-                    print3("Subnet mask: "); print_ip_addr(*(int32_t *)pvendor);
+                    print3("Subnet mask: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_TIME_OFFSET:
                     break;
                 case TAG_GATEWAY:
-                    print3("Gateway: "); print_ip_addr(*(int32_t *)pvendor);
+                    print3("Gateway: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_TIME_SERVER:
                     break;
@@ -66,7 +66,7 @@ void handle_bootp(const unsigned char *bytes) {
                     print3("end of options\n");
                     return;
                 case TAG_REQUESTED_IP:
-                    print3("Requested IP: "); print_ip_addr(*(int32_t *)pvendor);
+                    print3("Requested IP: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_IP_LEASE:
                     printf3("IP lease time: %us", ntohl(*(u_int32_t *)pvendor))
@@ -110,7 +110,7 @@ void handle_bootp(const unsigned char *bytes) {
                     break;
                 }
                 case TAG_SERVER_ID:
-                    print3("DHCP server identifier: "); print_ip_addr(*(int32_t *)pvendor);
+                    print3("DHCP server identifier: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_PARM_REQUEST:
                     print3("Parameter request list");
@@ -128,7 +128,7 @@ void handle_bootp(const unsigned char *bytes) {
                 case TAG_VENDOR_CLASS:
                     break;
                 case TAG_CLIENT_ID:
-                    print3("Client identifier: "); print_ether_address(pvendor + 1);
+                    print3("Client identifier: "); print_ether_address3(pvendor + 1);
                     break;
                 default:
                     break;

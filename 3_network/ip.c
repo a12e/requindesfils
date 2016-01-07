@@ -17,8 +17,8 @@ void print_ip_addr(int32_t ip) {
 
 void handle_ip(const unsigned char *bytes) {
     struct iphdr *ip_hdr = (struct iphdr *)bytes;
-    print2("IP      "); print_ip_addr(ip_hdr->saddr);
-    print2(" -> "); print_ip_addr(ip_hdr->daddr);
+    print2("IP      "); print_ip_addr2(ip_hdr->saddr);
+    print2(" -> "); print_ip_addr2(ip_hdr->daddr);
     printf2(", v%u, ", ip_hdr->version);
     //printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
     uint16_t len = ntohs(ip_hdr->tot_len);
@@ -33,7 +33,7 @@ void handle_ip(const unsigned char *bytes) {
     while(bytes < ip_hdr_end) {
         bytes++;
     }
-    printf("\n");
+    print2("\n");
 
     if(ip_hdr->protocol == 0x11) {
         handle_udp(bytes);

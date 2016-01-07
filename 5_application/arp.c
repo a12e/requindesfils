@@ -22,16 +22,16 @@ void handle_arp(const unsigned char *bytes) {
 
     if(arp_hdr->ar_hln == 6 && arp_hdr->ar_pln == 4) {
         print1(", ");
-        print_ether_address((u_int8_t *) bytes);
+        print_ether_address1((u_int8_t *) bytes);
         bytes += 6;
         print1(" (");
         print_ip_addr(*(int32_t *) bytes);
         bytes += 4;
         print1(") -> ");
-        print_ether_address((u_int8_t *) bytes);
+        print_ether_address1((u_int8_t *) bytes);
         bytes += 6;
         print1(" (");
-        print_ip_addr(*(int32_t *) bytes);
+        print_ip_addr1(*(int32_t *) bytes);
         bytes += 4;
         print1(")");
     }

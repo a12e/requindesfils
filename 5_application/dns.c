@@ -89,7 +89,7 @@ void handle_dns(const unsigned char *bytes) {
         bytes += 2;
 
         if(type == 1 && class == 1) {
-            print_ip_addr(*(int32_t*) bytes);
+            print_ip_addr3(*(int32_t*) bytes);
         }
         bytes += rdlength;
 

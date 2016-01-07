@@ -10,7 +10,7 @@ extern void handle_bootp(const unsigned char *);
 void handle_udp(const unsigned char *bytes) {
     struct udphdr *udp_hdr = (struct udphdr *)bytes;
     u_short source = ntohs(udp_hdr->source), dest = ntohs(udp_hdr->dest);
-    printf("UDP     %u -> %u, len %u, checksum %u\n",
+    printf2("UDP     %u -> %u, len %u, checksum %u\n",
            source, dest, ntohs(udp_hdr->len), ntohs(udp_hdr->check));
 
     bytes += sizeof(struct udphdr);
@@ -22,9 +22,9 @@ void handle_udp(const unsigned char *bytes) {
         handle_bootp(bytes);
     }
     else if(source == 137 || dest == 137) {
-        printf("NETBIOS \n");
+        print1("NETBIOS \n");
     }
     else {
-        printf("???     unsupported UDP protocol\n");
+        print1("???     unsupported UDP protocol\n");
     }
 }
