@@ -15,6 +15,9 @@ void handle_http(const char *bytes) {
         while(*bytes != '\n')
             putchar1(*bytes++);
 
+        putchar('\n');
+        bytes++;
+
         while(strncmp("\r\n", bytes, 2) != 0) { // print headers (<==> until we have double \n)
             print3("        ");
 
@@ -26,6 +29,6 @@ void handle_http(const char *bytes) {
         }
     }
     else {
-        print1("[Content...]\n");
+        print1("[... HTTP Content...]\n");
     }
 }

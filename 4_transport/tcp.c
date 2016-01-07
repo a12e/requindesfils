@@ -36,7 +36,7 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
     printf2("TCP     %u -> %u, [", tcp_hdr->th_sport, tcp_hdr->th_dport);
     print_flags(tcp_hdr->th_flags);
     print2("], ");
-    printf2("seq %u, ack %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq));
+    printf2("seq %u, ack %u, win %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq), ntohs(tcp_hdr->window));
 
     //print_hex(bytes, segment_len);
 

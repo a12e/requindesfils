@@ -9,19 +9,19 @@ int print_label(const unsigned char *base, const unsigned char *bytes) {
     while((len = *(bytes++)) != 0) {
         if(len & 0b11000000) {
             int offset = (len & 0b00111111) << 8 | *(bytes++);
-            //printf1("(>>%d)", offset);
+            //printf3("(@%d)", offset);
             print_label(base, base + offset);
             total += 2;
             total -= 1; // to cancel the normal total + 1 at the end
             break;
         }
         else {
-            //printf1("(%u)", len);
+            //printf3("(%u)", len);
             total += 1 + len;
             for (int i = 0; i < len; i++) {
-                putchar1(*(bytes++));
+                putchar3(*(bytes++));
             }
-            putchar1('.');
+            putchar3('.');
         }
     }
     return total + 1;
@@ -29,22 +29,22 @@ int print_label(const unsigned char *base, const unsigned char *bytes) {
 
 void print_type(uint16_t type) {
     switch(type) {
-        case 1: print1("A"); break;
-        case 2: print1("NS"); break;
-        case 5: print1("CNAME"); break;
-        case 6: print1("SOA"); break;
-        case 12: print1("PTR"); break;
-        case 15: print1("MX"); break;
-        case 16: print1("TXT"); break;
-        case 28: print1("AAAA"); break;
-        default: printf1("UNKNOWN(%u (%02X %02X))", type, ((uint8_t*)&type)[1], ((uint8_t*)&type)[0]); break;
+        case 1: print3("A"); break;
+        case 2: print3("NS"); break;
+        case 5: print3("CNAME"); break;
+        case 6: print3("SOA"); break;
+        case 12: print3("PTR"); break;
+        case 15: print3("MX"); break;
+        case 16: print3("TXT"); break;
+        case 28: print3("AAAA"); break;
+        default: printf3("UNKNOWN(%u (%02X %02X))", type, ((uint8_t*)&type)[1], ((uint8_t*)&type)[0]); break;
     }
 }
 
 void print_class(uint16_t class) {
     switch(class) {
-        case 1: print1("IN"); break;
-        default: printf1("UNKNOWN(%u (%02X %02X))", class, ((uint8_t*)&class)[1], ((uint8_t*)&class)[0]); break;
+        case 1: print3("IN"); break;
+        default: printf3("UNKNOWN(%u (%02X %02X))", class, ((uint8_t*)&class)[1], ((uint8_t*)&class)[0]); break;
     }
 }
 
@@ -57,32 +57,32 @@ void handle_dns(const unsigned char *bytes) {
     bytes += sizeof(struct dnshdr);
 
     for(int i = 0; i < ntohs(dns_hdr->qdcount); i++) {
-        print1("        question ");
+        print3("        question ");
         bytes += print_label((const unsigned char *)dns_hdr, bytes);
-        putchar1(' ');
+        putchar3(' ');
         print_type(ntohs(*(uint16_t *) bytes));
         bytes += 2;
-        putchar1(' ');
+        putchar3(' ');
         print_class(ntohs(*(uint16_t *) bytes));
         bytes += 2;
-        putchar1('\n');
+        putchar3('\n');
     }
 
     for(int i = 0; i < ntohs(dns_hdr->ancount); i++) {
-        print1("        answer ");
+        print3("        answer ");
         bytes += print_label((const unsigned char *)dns_hdr, bytes);
-        putchar1(' ');
+        putchar3(' ');
 
         uint16_t type = ntohs(*(uint16_t *) bytes);
         print_type(type);
         bytes += 2;
-        putchar1(' ');
+        putchar3(' ');
 
         uint16_t class = ntohs(*(uint16_t *) bytes);
         print_class(class);
         bytes += 2;
 
-        printf1(", ttl %u  ", ntohl(*(uint32_t*) bytes));
+        printf3(", ttl %u  ", ntohl(*(uint32_t*) bytes));
         bytes += 4;
 
         uint16_t rdlength = ntohs(*(uint16_t*) bytes);
@@ -93,6 +93,6 @@ void handle_dns(const unsigned char *bytes) {
         }
         bytes += rdlength;
 
-        print1("\n");
+        print3("\n");
     }
 }
