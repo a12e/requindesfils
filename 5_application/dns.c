@@ -50,7 +50,9 @@ void print_class(uint16_t class) {
 
 void handle_dns(const unsigned char *bytes) {
     struct dnshdr *dns_hdr = (struct dnshdr *)bytes;
-    printf("DNS     #0x%x: %u questions, %u answers, %u authorities, %u resources\n",
+    print1("DNS     ");
+    print_ips_from_last_header_v1();
+    printf1("#0x%x: %u questions, %u answers, %u authorities, %u resources\n",
            ntohs(dns_hdr->id), ntohs(dns_hdr->qdcount), ntohs(dns_hdr->ancount),
            ntohs(dns_hdr->nscount), ntohs(dns_hdr->arcount));
 

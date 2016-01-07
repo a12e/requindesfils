@@ -16,18 +16,28 @@ void print_ip_addr(int32_t ip) {
     printf("%d.%d.%d.%d", bytes[0], bytes[1], bytes[2], bytes[3]);
 }
 
+static struct iphdr *ip_hdr;
+
+void print_ips_from_last_header_v1() {
+    print1("[");
+    print_ip_addr1(ip_hdr->saddr);
+    printf(" -> ");
+    print_ip_addr1(ip_hdr->daddr);
+    printf("] ");
+}
+
 void handle_ip(const unsigned char *bytes) {
-    struct iphdr *ip_hdr = (struct iphdr *)bytes;
-    print2("IPv4    "); print_ip_addr2(ip_hdr->saddr);
+    ip_hdr = (struct iphdr *)bytes;
+
+    printf2("IPv%u    ", ip_hdr->version); print_ip_addr2(ip_hdr->saddr);
     print2(" -> "); print_ip_addr2(ip_hdr->daddr);
-    //printf2(", v%u, ", ip_hdr->version);
-    //printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
+    printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
     uint16_t len = ntohs(ip_hdr->tot_len);
     printf2("len %u, ", len);
     printf2("id %u, ", ip_hdr->id);
     printf3("foff %u, ttl %u, ", ip_hdr->frag_off, ip_hdr->ttl);
-    printf2("proto Ox%x, ", ip_hdr->protocol);
-    printf3("sum %u ", ip_hdr->check);
+    printf3("proto Ox%x, ", ip_hdr->protocol);
+    printf3("chksum 0x%x ", ip_hdr->check);
 
     const u_char *ip_hdr_end = bytes + 4 * ip_hdr->ihl;
 

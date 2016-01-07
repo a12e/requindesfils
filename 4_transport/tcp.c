@@ -3,7 +3,6 @@
 #include "tcp.h"
 #include "../print.h"
 #include "../5_application/http.h"
-#include "../5_application/ascii.h"
 
 extern void handle_telnet(const unsigned char *bytes, uint16_t frame_len);
 
@@ -38,8 +37,6 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
     print2("], ");
     printf2("seq %u, ack %u, win %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq), ntohs(tcp_hdr->window));
 
-    //print_hex(bytes, segment_len);
-
     int data_offset = 4 * tcp_hdr->th_off;
     const unsigned char *end = bytes + data_offset;
     bytes += sizeof(struct tcphdr);
@@ -51,7 +48,7 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
         if(kind != 0 && kind != 1)
             len = *bytes++;
 
-        printf3("        option %u ", kind);
+        printf3("        option %u: ", kind);
         switch(kind) {
             case 0: print3("end of options"); break;
             case 1: print3("no operation (NOP)"); break;
@@ -60,11 +57,13 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
             case 4: print3("SACK permited"); break;
             case 5: print3("SACK"); break;
             case 8: print3("timestamps"); break;
-            default: break;
+            default: print3("unknown"); break;
         }
         print3("\n");
 
-        bytes += len;
+        // advance by the size of the option read
+        if(kind != 0 && kind != 1)
+            bytes += len - 2;
     }
 
     if(tcp_hdr->th_sport == 80 || tcp_hdr->th_dport == 80) {

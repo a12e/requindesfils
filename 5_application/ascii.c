@@ -39,5 +39,4 @@ void print_hex(unsigned char *str, size_t len) {
         lines++;
         putchar('\n');
     }
-
 }

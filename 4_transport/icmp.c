@@ -52,7 +52,8 @@ void handle_icmp(const unsigned char *bytes) {
 
     printf1(" (%u)", icmp_hdr->type);
     printf1(", code %u", icmp_hdr->code);
-    if(icmp_hdr->type == ICMP_ECHO || icmp_hdr->type == ICMP_ECHOREPLY) printf1(", id %u, seq %u", icmp_hdr->un.echo.id, icmp_hdr->un.echo.sequence);
+    if(icmp_hdr->type == ICMP_ECHO || icmp_hdr->type == ICMP_ECHOREPLY)
+        printf1(", id %u, seq %u", icmp_hdr->un.echo.id, icmp_hdr->un.echo.sequence);
 
     print1("\n");
 }

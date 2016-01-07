@@ -1,9 +1,11 @@
 #include <string.h>
 #include "http.h"
 #include "../print.h"
+#include "../3_network/ip.h"
 
 void handle_http(const char *bytes) {
     print1("HTTP    ");
+    print_ips_from_last_header_v1();
 
     if(strncmp("HTTP", bytes, 4) == 0
        || strncmp("GET", bytes, 3) == 0

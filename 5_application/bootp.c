@@ -2,12 +2,12 @@
 #include <string.h>
 #include "bootp.h"
 #include "../print.h"
-#include "../2_link/ethernet.h"
 #include "../3_network/ip.h"
 
 void handle_bootp(const unsigned char *bytes) {
     struct bootphdr *bootp_hdr = (struct bootphdr *)bytes;
     printf1("BOOTP   %s ", bootp_hdr->bp_op == BOOTPREQUEST ? "request" : (bootp_hdr->bp_op == BOOTPREPLY ? "reply" : "unknown"));
+    print_ips_from_last_header_v1();
     printf1("tid 0x%x", ntohl(bootp_hdr->bp_xid));
     if(bootp_hdr->bp_ciaddr.s_addr != 0) printf1(", client %s", inet_ntoa(bootp_hdr->bp_ciaddr));
     if(bootp_hdr->bp_htype == 1 && bootp_hdr->bp_hlen == 6 && bootp_hdr->bp_chaddr[0] != 0 && bootp_hdr->bp_chaddr[1] != 0) {
@@ -24,7 +24,7 @@ void handle_bootp(const unsigned char *bytes) {
 
     if(memcmp(pvendor, magic_cookie, 4) == 0) {
         pvendor += 4;
-        printf3("        magic cookie 0x%02x%02x%02x%02x\n", magic_cookie[0], magic_cookie[1], magic_cookie[2], magic_cookie[3]);
+        printf3("        magic cookie 0x%02x%02x%02x%02x\n", pvendor[0], pvendor[1], pvendor[2], pvendor[3]);
 
         while(1) {
             u_int8_t option = *pvendor++;
@@ -37,8 +37,6 @@ void handle_bootp(const unsigned char *bytes) {
                     break;
                 case TAG_SUBNET_MASK:
                     print3("Subnet mask: "); print_ip_addr3(*(int32_t *)pvendor);
-                    break;
-                case TAG_TIME_OFFSET:
                     break;
                 case TAG_GATEWAY:
                     print3("Gateway: "); print_ip_addr3(*(int32_t *)pvendor);
@@ -112,8 +110,6 @@ void handle_bootp(const unsigned char *bytes) {
                     break;
                 case TAG_REBIND_TIME:
                     printf3("Rebinding time: %us", ntohl(*(u_int32_t*)pvendor));
-                    break;
-                case TAG_VENDOR_CLASS:
                     break;
                 case TAG_CLIENT_ID:
                     print3("Client identifier: "); print_ether_address3(pvendor + 1);

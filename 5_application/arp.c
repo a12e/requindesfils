@@ -20,6 +20,7 @@ void handle_arp(const unsigned char *bytes) {
 
     bytes += sizeof(struct arphdr);
 
+    // Check if we really have ethernet and IPv4
     if(arp_hdr->ar_hln == 6 && arp_hdr->ar_pln == 4) {
         print1(", ");
         print_ether_address1((u_int8_t *) bytes);
