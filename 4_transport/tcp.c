@@ -74,6 +74,6 @@ void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
         handle_telnet(bytes, segment_len - data_offset);
     }
     else {
-        print2("???     Unknown TCP application\n");
+        printf1("???     Unknown TCP application with ports %u -> %u\n", tcp_hdr->th_sport, tcp_hdr->th_dport);
     }
 }

@@ -16,6 +16,7 @@ void handle_bootp(const unsigned char *bytes) {
     if(bootp_hdr->bp_yiaddr.s_addr != 0) printf1(", your %s", inet_ntoa(bootp_hdr->bp_yiaddr));
     if(bootp_hdr->bp_siaddr.s_addr != 0) printf1(", server %s", inet_ntoa(bootp_hdr->bp_siaddr));
     if(bootp_hdr->bp_giaddr.s_addr != 0) printf1(", gate %s", inet_ntoa(bootp_hdr->bp_giaddr));
+    if(bootp_hdr->bp_file[0] != '\0') printf1(", file %s", bootp_hdr->bp_file);
     putchar1('\n');
 
     u_int8_t *pvendor = bootp_hdr->bp_vend;
@@ -43,39 +44,30 @@ void handle_bootp(const unsigned char *bytes) {
                     print3("Gateway: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_TIME_SERVER:
-                    break;
-                case TAG_NAME_SERVER:
+                    print3("Time server: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_DOMAIN_SERVER:
-                    break;
-                case TAG_LOG_SERVER:
-                    break;
-                case TAG_COOKIE_SERVER:
-                    break;
-                case TAG_LPR_SERVER:
-                    break;
-                case TAG_IMPRESS_SERVER:
-                    break;
-                case TAG_RLP_SERVER:
+                    print3("Domain name server: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_HOSTNAME:
+                    print3("Host name: ");
+                    for(int i = 0; i < len; i++) putchar(pvendor[i]);
                     break;
-                case TAG_BOOTSIZE:
+                case TAG_DOMAINNAME:
+                    print3("Domain name: ");
+                    for(int i = 0; i < len; i++) putchar(pvendor[i]);
                     break;
                 case TAG_END:
-                    print3("end of options\n");
+                    print3("End of options\n");
                     return;
+                case TAG_BROAD_ADDR:
+                    print3("Broadcast address: "); print_ip_addr3(*(int32_t *)pvendor);
+                    break;
                 case TAG_REQUESTED_IP:
                     print3("Requested IP: "); print_ip_addr3(*(int32_t *)pvendor);
                     break;
                 case TAG_IP_LEASE:
-                    printf3("IP lease time: %us", ntohl(*(u_int32_t *)pvendor))
-                    break;
-                case TAG_OPT_OVERLOAD:
-                    break;
-                case TAG_TFTP_SERVER:
-                    break;
-                case TAG_BOOTFILENAME:
+                    printf3("IP lease time: %us", ntohl(*(u_int32_t *)pvendor));
                     break;
                 case TAG_DHCP_MESSAGE: {
                     u_int8_t dhcp_message = *pvendor;
@@ -114,10 +106,6 @@ void handle_bootp(const unsigned char *bytes) {
                     break;
                 case TAG_PARM_REQUEST:
                     print3("Parameter request list");
-                    break;
-                case TAG_MESSAGE:
-                    break;
-                case TAG_MAX_MSG_SIZE:
                     break;
                 case TAG_RENEWAL_TIME:
                     printf3("Renewal time: %us", ntohl(*(u_int32_t*)pvendor));
