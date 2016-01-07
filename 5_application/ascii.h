@@ -8,5 +8,6 @@
 #include <stddef.h>
 
 void print_ascii(unsigned char *str, size_t len);
+void print_hex(unsigned char *str, size_t len);
 
 #endif //REQUINDESFILS_ASCII_H

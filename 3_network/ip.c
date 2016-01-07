@@ -21,11 +21,12 @@ void handle_ip(const unsigned char *bytes) {
     print2(" -> "); print_ip_addr(ip_hdr->daddr);
     printf2(", v%u, ", ip_hdr->version);
     //printf3("ihl %u, tos %u, ", ip_hdr->ihl, ip_hdr->tos);
-    printf2("len %u, ", ntohs(ip_hdr->tot_len));
+    uint16_t len = ntohs(ip_hdr->tot_len);
+    printf2("len %u, ", len);
     printf2("id %u, ", ip_hdr->id);
     //printf3("frag_off %u, ttl %u, ", ip_hdr->frag_off, ip_hdr->ttl);
-    printf2("protocol Ox%x, ", ip_hdr->protocol);
-    printf3("checksum %u ", ip_hdr->check);
+    printf2("proto Ox%x, ", ip_hdr->protocol);
+    printf3("sum %u ", ip_hdr->check);
 
     const u_char *ip_hdr_end = bytes + 4 * ip_hdr->ihl;
 
@@ -38,7 +39,7 @@ void handle_ip(const unsigned char *bytes) {
         handle_udp(bytes);
     }
     else if(ip_hdr->protocol == 0x06) {
-        handle_tcp(bytes);
+        handle_tcp(bytes, len - sizeof(struct iphdr));
     }
     else {
         printf("???     unsupported transport protocol 0x%x\n", ip_hdr->protocol);

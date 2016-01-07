@@ -3,6 +3,9 @@
 #include "tcp.h"
 #include "../print.h"
 #include "../5_application/http.h"
+#include "../5_application/ascii.h"
+
+extern void handle_telnet(const unsigned char *bytes, uint16_t frame_len);
 
 static int flag_count;
 
@@ -26,7 +29,7 @@ void print_flags(u_int8_t flags) {
     if(flags & TH_URG) print_flag("URG");
 }
 
-void handle_tcp(const unsigned char *bytes) {
+void handle_tcp(const unsigned char *bytes, uint16_t segment_len) {
     struct tcphdr *tcp_hdr = (struct tcphdr *) bytes;
     tcp_hdr->th_sport = ntohs(tcp_hdr->th_sport);
     tcp_hdr->th_dport = ntohs(tcp_hdr->th_dport);
@@ -35,7 +38,10 @@ void handle_tcp(const unsigned char *bytes) {
     print2("], ");
     printf2("seq %u, ack %u\n", ntohl(tcp_hdr->seq), ntohl(tcp_hdr->ack_seq));
 
-    const unsigned char *end = bytes + 4 * tcp_hdr->th_off;
+    print_hex(bytes, segment_len);
+
+    int data_offset = 4 * tcp_hdr->th_off;
+    const unsigned char *end = bytes + data_offset;
     bytes += sizeof(struct tcphdr);
 
     while(bytes < end) {
@@ -62,9 +68,12 @@ void handle_tcp(const unsigned char *bytes) {
     }
 
     if(tcp_hdr->th_sport == 80 || tcp_hdr->th_dport == 80) {
-        handle_http((const char *)bytes);
+        handle_http((const char *) bytes);
+    }
+    else if(tcp_hdr->th_sport == 23 || tcp_hdr->th_dport == 23) {
+        handle_telnet(bytes, segment_len - data_offset);
     }
     else {
-        print2("???\n");
+        print2("???     Unknown TCP application\n");
     }
 }
