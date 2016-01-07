@@ -6,7 +6,7 @@
 #include "../5_application/arp.h"
 
 void print_ether_address(u_int8_t ether_addr[ETH_ALEN]) {
-    printf2("%02x:%02x:%02x:%02x:%02x:%02x",
+    printf("%02x:%02x:%02x:%02x:%02x:%02x",
            ether_addr[0], ether_addr[1], ether_addr[2],
            ether_addr[3], ether_addr[4], ether_addr[5]);
 }

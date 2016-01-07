@@ -19,11 +19,13 @@ void print_ip_addr(int32_t ip) {
 static struct iphdr *ip_hdr;
 
 void print_ips_from_last_header_v1() {
-    print1("[");
-    print_ip_addr1(ip_hdr->saddr);
-    printf(" -> ");
-    print_ip_addr1(ip_hdr->daddr);
-    printf("] ");
+    if(verbosity == 1) {
+        printf("[");
+        print_ip_addr(ip_hdr->saddr);
+        printf(" -> ");
+        print_ip_addr(ip_hdr->daddr);
+        printf("] ");
+    }
 }
 
 void handle_ip(const unsigned char *bytes) {

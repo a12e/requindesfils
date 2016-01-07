@@ -26,15 +26,15 @@ void print3(const char *str) {
     if(verbosity >= 3) {printf(str);}
 }
 
-void print_ether_address1(uint8_t *ether_addr) {
+void print_ether_address1(u_int8_t *ether_addr) {
     if(verbosity >= 1) print_ether_address(ether_addr);
 }
 
-void print_ether_address2(uint8_t *ether_addr) {
+void print_ether_address2(u_int8_t *ether_addr) {
     if(verbosity >= 2) print_ether_address(ether_addr);
 }
 
-void print_ether_address3(uint8_t *ether_addr) {
+void print_ether_address3(u_int8_t *ether_addr) {
     if(verbosity >= 3) print_ether_address(ether_addr);
 }
 
